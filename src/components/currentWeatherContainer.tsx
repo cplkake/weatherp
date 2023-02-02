@@ -3,16 +3,21 @@ import {
   kelvintoFahrenheit,
   capitalizeWords,
 } from "@/lib/utils";
+import TempUnitSelector from "./tempUnitSelector";
+
+type TempUnits = "C" | "F";
 
 export default function CurrentWeatherContainer({
   tempUnit,
+  setTempUnit,
   location,
   currentTemp,
   description,
   todayHigh,
   todayLow,
 }: {
-  tempUnit: "C" | "F";
+  tempUnit: TempUnits;
+  setTempUnit: React.Dispatch<React.SetStateAction<TempUnits>>;
   location: string;
   currentTemp: number;
   description: string;
@@ -32,14 +37,20 @@ export default function CurrentWeatherContainer({
   description = capitalizeWords(description);
 
   return (
-    <div className="max-w-3xl text-center text-white">
-      <h2 className="text-3xl font-light">{location}</h2>
-      <h1 className="text-7xl font-extralight py-2">{currentTemp}&deg;</h1>
-      <p className="text-base">{description}</p>
-      <div className="flex text-base justify-center gap-3">
-        <p className="">{`H: ${todayHigh}`}&deg;</p>
-        <p className="">{`L: ${todayLow}`}&deg;</p>
+    <div className="w-11/12 max-w-3xl relative">
+      <div className="text-center text-white">
+        <h1 className="text-3xl font-light">{location}</h1>
+        <h2 className="text-7xl font-extralight py-2">{currentTemp}&deg;</h2>
+        <p className="text-base">{description}</p>
+        <div className="flex text-base justify-center gap-3">
+          <p className="">{`H: ${todayHigh}`}&deg;</p>
+          <p className="">{`L: ${todayLow}`}&deg;</p>
+        </div>
       </div>
+      <TempUnitSelector
+        tempUnit={tempUnit}
+        setTempUnit={setTempUnit}
+      />
     </div>
   );
 }

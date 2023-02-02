@@ -87,7 +87,16 @@ interface FullData {
 }
 
 export default function useWeatherSearch({ lat, lon }: LocationCoords) {
-  const fetcher = (apiUrl: string) => fetch(apiUrl).then((res) => res.json());
+  const fetcher = async (apiUrl: string) => {
+    const res = await fetch(apiUrl)
+
+    if (!res.ok) {
+      const error = new Error('An error occurred while fetching the data.');
+      throw error;
+    }
+
+    return res.json()
+  };
 
   const { data, error, isLoading } = useSWR(
     `/api/weather?lat=${lat}&lon=${lon}`,
@@ -97,6 +106,6 @@ export default function useWeatherSearch({ lat, lon }: LocationCoords) {
   return {
     locationResults: data as FullData,
     isLoading,
-    isError: error,
+    error,
   };
 }

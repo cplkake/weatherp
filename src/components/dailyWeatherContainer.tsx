@@ -54,26 +54,28 @@ export default function DailyWeatherContainer({
     if (weatherId && probOfPrecip) {
       if (PRECIP_CODE.includes(weatherId.toString().charAt(0))) {
         return (
-          <p className="text-xs text-sky-300">{`${Math.round(probOfPrecip * 10) * 10}%`}</p>
+          <p className="text-xs text-sky-300">
+            {`${Math.round(probOfPrecip * 10) * 10}%`}
+          </p>
         )
       }
     }
   }
 
   return (
-    <div className="container rounded-2xl py-3 px-4 backdrop-blur-md bg-gray-500/10 shadow-md">
-      <p className="text-xs text-white/50 pb-1">8-DAY FORECAST</p>
+    <div className="w-full mx-auto sm:container rounded-2xl py-3 px-4 backdrop-blur-md bg-gray-500/10 shadow-md overflow-hidden">
+      <h2 className="text-xs text-white/50 pb-1">8-DAY FORECAST</h2>
       <div className="grid grid-cols-1 auto-rows-fr">
         {dailyData.map((dataPoint, index) => (
           <div
             key={dataPoint.dt}
-            className="container flex justify-between items-center border-t border-black/20"
+            className="container flex basis-52 justify-between items-center border-t border-black/20 sm:text-base overflow-auto"
           >
-            <div className="text-white w-1/6">
+            <h3 className="text-white w-1/6">
               {index === 0
                 ? "Today"
                 : unixTimeToLocalDay(dataPoint.dt + timeZoneOffset)}
-            </div>
+            </h3>
             <div className="flex flex-col items-center justify-evenly">
               <Image
                 src={`/${dataPoint.weather[0].icon}.svg`}
@@ -83,7 +85,7 @@ export default function DailyWeatherContainer({
               />
               {displayProbOfPrecip(dataPoint.weather[0].id, dataPoint.pop)}
             </div>
-            <div className="flex items-center gap-x-3 w-3/4">
+            <div className="flex items-center gap-x-1 sm:gap-x-3 sm:w-3/4 w-2/3">
               <p className="w-1/6 text-end text-white/70">
                 {tempUnit === "C"
                   ? kelvinToCelsius(dataPoint.temp.min)
@@ -102,7 +104,7 @@ export default function DailyWeatherContainer({
                       ((dataPoint.temp.min - lowestWeekTemp) / weeklyRange) * 100
                     }%`,
                   }}
-                ></div>
+                />
               </div>
               <p className="w-1/6 text-start text-white">
                 {tempUnit === "C"

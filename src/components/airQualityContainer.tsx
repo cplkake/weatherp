@@ -54,7 +54,7 @@ export default function AirQualityContainer({
 
    return (
     <div className="w-full mx-auto sm:container rounded-2xl p-3 sm:px-4 backdrop-blur-md bg-gray-500/10 shadow-md">
-      <p className="text-xs text-white/50 pb-0.5">AIR QUALITY</p>
+      <h2 className="text-xs text-white/50 pb-0.5">AIR QUALITY</h2>
       <div className="text-white">
         <h3 className="mb-0.5 text-lg">{`${AQI} - ${aqiDescription[AQI].title}`}</h3>
         <p className="text-sm text-white/90 mb-2">{`Air quality is ${aqiDescription[AQI].paragraph} today.`}</p>

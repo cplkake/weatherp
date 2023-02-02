@@ -35,7 +35,7 @@ export default function CommandPalette({
 }) {
   useEffect(() => {
     function onKeydown(e: KeyboardEvent) {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      if (e.key === "/") {
         e.preventDefault();
         e.stopPropagation();
         setIsOpen(!isOpen);

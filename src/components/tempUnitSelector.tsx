@@ -17,7 +17,7 @@ export default function TempUnitSelector({
   }
   
   return (
-    <div className="flex gap-1 mt-14">
+    <div className="flex gap-1 mt-14 absolute top-0 left-[75%] sm:left-2/3">
       <Switch
         checked={isCelsius}
         onChange={toggleSwitch}
@@ -30,9 +30,9 @@ export default function TempUnitSelector({
           } inline-block h-4 w-4 transform rounded-full bg-white transition`}
         />
       </Switch>
-      <div className="text-white/70 text-xs ">
-        <p className="pb-3">{'\u00B0F'}</p>
-        <p>{'\u00B0C'}</p>
+      <div className="text-xs ">
+        <p className={`pb-3 ${tempUnit === 'F' ? 'text-white' : 'text-white/60'}`}>{'\u00B0F'}</p>
+        <p className={`${tempUnit === 'C' ? 'text-white' : 'text-white/60'}`}>{'\u00B0C'}</p>
       </div>
     </div>
   )

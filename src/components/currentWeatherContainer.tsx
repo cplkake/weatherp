@@ -34,14 +34,12 @@ export default function CurrentWeatherContainer({
     todayLow = kelvintoFahrenheit(todayLow);
   }
 
-  description = capitalizeWords(description);
-
   return (
     <div className="w-11/12 max-w-3xl relative">
       <div className="text-center text-white">
         <h1 className="text-3xl font-light">{location}</h1>
         <h2 className="text-7xl font-extralight py-2">{currentTemp}&deg;</h2>
-        <p className="text-base">{description}</p>
+        <p className="text-base">{capitalizeWords(description)}</p>
         <div className="flex text-base justify-center gap-3">
           <p className="">{`H: ${todayHigh}`}&deg;</p>
           <p className="">{`L: ${todayLow}`}&deg;</p>

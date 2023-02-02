@@ -1,6 +1,6 @@
-# Weather App
+# Weatherp
 
-Weather App (tentative name) is a Next.js app powered by the OpenWeather API.
+Weatherp is a Next.js app powered by the OpenWeather API.
 
 ## Description
 

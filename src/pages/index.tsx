@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
-import { Inter } from "@next/font/google";
 import useWeatherSearch from "@/hooks/useWeatherSearch";
 import CommandPalette from "@/components/commandPalette";
 import SearchBar from "@/components/searchBar";
@@ -55,7 +54,6 @@ export default function Home() {
     lat: targetLocation.lat,
     lon: targetLocation.lon,
   });
-  
   const backgroundColorValues = {
     midnight: {
       bottom: "2c3e5a",
@@ -83,6 +81,7 @@ export default function Home() {
     setUserInput(e.target.value);
   };
 
+  // returns the proportionate color decimal value based on the count's distance from min and max
   function calculateGradient(
     min: number,
     max: number,
@@ -96,6 +95,8 @@ export default function Home() {
     );
   }
 
+  // sets up the given color hex string and times for the gradient calculation
+  // returns the calculated color values back in hex strings
   function calculateHex(
     startColor: string,
     endColor: string,
@@ -107,14 +108,8 @@ export default function Home() {
     const startColorArray = startColor.match(/.{1,2}/g);
     const endColorArray = endColor.match(/.{1,2}/g);
 
-    // console.log('start color: '+startColor)
-    // console.log('end color: '+endColor)
-
     if (startColorArray && endColorArray) {
       for (let i = 0; i < 3; i++) {
-        // console.log(parseInt(startColorArray[i], 16))
-        // console.log(parseInt(endColorArray[i], 16))
-        // console.log(color)
         color = color.concat(
           Math.ceil(
             calculateGradient(
@@ -126,25 +121,21 @@ export default function Home() {
             )
           ).toString(16)
         );
-        // console.log(Math.ceil(calculateGradient(startTime, endTime, currentTime, parseInt(startColorArray[i], 16), parseInt(endColorArray[i], 16))).toString(16))
       }
-      // console.log('color: '+color)
       return color;
     } 
     else return "000";
   }
 
+  // given the color of the page position being calculated and referencing the time of the day, sunrise, and sunsets,
+  // returns the respective calculated hex color string code 
   function calculateColor(position: "bottom" | "middle" | "top") {
     const locationSunrise = locationResults.weather.current.sunrise;
     const locationSunset = locationResults.weather.current.sunset;
     const currentTime = locationResults.weather.current.dt;
-    // const prefix = position === "bottom" ? "from" : position === "middle" ? "via" : "to";
 
     if (currentTime <= locationSunrise) {
       const breakOfDawn = locationSunrise - 3400;
-      // console.log('current time: '+currentTime)
-      // console.log('break of dawn: '+breakOfDawn)
-      // console.log('location sunrise: ' + locationSunrise)
       if (currentTime >= breakOfDawn) {
         const startColor = backgroundColorValues.midnight[position];
         const endColor = backgroundColorValues.twilight[position];
@@ -155,8 +146,6 @@ export default function Home() {
           locationSunrise,
           currentTime
         );
-        // console.log(prefix)
-        // console.log(hexCode)
         return `#${hexCode}`;
       } 
       else return `#${backgroundColorValues.midnight[position]}`;
@@ -173,8 +162,6 @@ export default function Home() {
           sunShineTime,
           currentTime
         );
-        // console.log(prefix)
-        // console.log(hexCode)
         return `#${hexCode}`;
       }
       if (currentTime >= breakOfDusk) {
@@ -187,16 +174,11 @@ export default function Home() {
           locationSunset,
           currentTime
         );
-        // console.log(prefix)
-        // console.log(hexCode)
         return `#${hexCode}`;
       } 
       else return `#${backgroundColorValues.midday[position]}`;
     } else {
       const darknessTime = locationSunset + 3600;
-      // console.log('current time: '+currentTime)
-      // console.log('darkness time: '+darknessTime)
-      // console.log('location sunset: ' + locationSunset)
       if (currentTime <= darknessTime) {
         const startColor = backgroundColorValues.twilight[position];
         const endColor = backgroundColorValues.midnight[position];
@@ -207,14 +189,13 @@ export default function Home() {
           darknessTime,
           currentTime
         );
-        // console.log(prefix)
-        // console.log(hexCode)
         return `#${hexCode}`;
       } 
       else return `#${backgroundColorValues.midnight[position]}`;
     }
   }
 
+  // returns the current day and tomorrow's sunrise and sunset times
   function loadRelevantTwilightTimes(): HourlyWeather[] {
     return [
       {
@@ -248,7 +229,8 @@ export default function Home() {
     ]
   }
 
-  function loadErrorMessage() {
+  // renders an error message on the top of the screen if an error is thrown upon retrieval of data
+  function displayErrorMessage() {
     if (error) {
       return (
         <div className="absolute bg-red-600 text-white text-sm -top-0 rounded-b-md px-2">
@@ -258,7 +240,7 @@ export default function Home() {
     }
   }
 
-  // fetch suggestions if there is no input detected 0.5s after user has modified the search bar
+  // fetches suggestions from the location API if there is no input detected 0.5s after user has modified the search bar
   useEffect(() => {
     if (userInput) {
       const delayDebounce = setTimeout(() => {
@@ -308,7 +290,7 @@ export default function Home() {
         <main
           className={`flex flex-col gap-y-16 items-center py-16 overflow-auto max-h-screen ${borderColor}`}
           >
-          {loadErrorMessage()}
+          {displayErrorMessage()}
           <SearchBar displayText={userInput} handleClick={handleSearchBarClick} />
           <CurrentWeatherContainer
             tempUnit={tempUnit}
@@ -323,7 +305,6 @@ export default function Home() {
             <HourlyWeatherContainer
               tempUnit={tempUnit}
               timeZoneOffset={locationResults.weather.timezone_offset}
-              currentTime={locationResults.weather.current.dt}
               hourlyData={locationResults.weather.hourly.slice(0, 25)}
               relevantTwilightTimes={loadRelevantTwilightTimes()}
             />

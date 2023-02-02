@@ -35,6 +35,7 @@ export default function DailyWeatherContainer({
 }) {
   const firstDayHigh = dailyData[0].temp.max;
   const firstDayLow = dailyData[0].temp.min;
+  
   const lowestWeekTemp = dailyData.reduce(
     (lowest, current) => Math.min(lowest, current.temp.min),
     firstDayLow

@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, Fragment } from "react";
 import { Dialog, Combobox, Transition } from "@headlessui/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
@@ -33,6 +33,8 @@ export default function CommandPalette({
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+
+  // sets up and tears down a listener for the user pressing '/' which toggles the open/close state of the palette
   useEffect(() => {
     function onKeydown(e: KeyboardEvent) {
       if (e.key === "/") {

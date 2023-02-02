@@ -21,13 +21,11 @@ interface HourlyWeather {
 export default function HourlyWeatherContainer({
   tempUnit,
   timeZoneOffset,
-  currentTime,
   hourlyData,
   relevantTwilightTimes,
 }: {
   tempUnit: "C" | "F";
   timeZoneOffset: number;
-  currentTime: number;
   hourlyData: Array<HourlyWeather>;
   relevantTwilightTimes: Array<HourlyWeather>;
 }) {
@@ -37,7 +35,7 @@ export default function HourlyWeatherContainer({
 
   function displayTimes(
     index: number,
-    dt: number
+    dt: number,
   ) {
     const timeString = index === 0 ? "NOW" : unixTimeToLocalTime(dt + timeZoneOffset)
 
@@ -67,7 +65,10 @@ export default function HourlyWeatherContainer({
     }
   }
   
-  function displayDescription(temp: number | undefined, description: string) {
+  function displayDescription(
+    temp: number | undefined, 
+    description: string
+  ) {
     if (typeof(temp) === 'number') {
       return tempUnit === "C" ? `${kelvinToCelsius(temp)}\u00B0` : `${kelvintoFahrenheit(temp)}\u00B0`
     }

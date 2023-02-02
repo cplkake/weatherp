@@ -10,7 +10,9 @@ export function capitalizeWords(line: string) {
   return line
     .toLowerCase()
     .split(" ")
-    .map((word) => word[0].toUpperCase() + word.slice(1))
+    .map(word => {
+  		return (word === 'and') || (word === 'with') ? word : word[0].toUpperCase() + word.slice(1)
+    })
     .join(" ");
 }
 

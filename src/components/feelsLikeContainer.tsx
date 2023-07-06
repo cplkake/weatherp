@@ -8,10 +8,15 @@ export default function FeelsLikeContainer({
   currentTemp,
   feelsLikeData,
 }: {
+  // TODO: use an enum here
+  //  Also I think we can direclty pass converted temperature to remove a bit of logic from component
   tempUnit: "C" | "F";
   currentTemp: number;
   feelsLikeData: number;
 }) {
+  // TODO: We should hide the implementation that determines wich message to show so we have a dummy component
+  //  If our component is not aware of business logic it will be more flexible
+  //  Also by extracting business logic you will be able to unit test it
   let message = "";
 
   if (feelsLikeData === currentTemp) message = "Similar to the actual temperature.";

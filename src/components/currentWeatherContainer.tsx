@@ -5,8 +5,12 @@ import {
 } from "@/lib/utils";
 import TempUnitSelector from "./tempUnitSelector";
 
+// TODO: I think an enum would be wiser as it's a set of values
 type TempUnits = "C" | "F";
 
+// TODO: Maybe we could pass a Weather object to reduce parameters
+//  It would encapsulate kelvinToCelsius or kelvintoFahrenheit in getTodayHigh() for example
+//  By doing this you remove logic from your component and rely only on your object getter
 export default function CurrentWeatherContainer({
   tempUnit,
   setTempUnit,

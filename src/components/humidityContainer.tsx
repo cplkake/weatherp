@@ -8,6 +8,8 @@ export default function HumidityContainer({
   humidityData, 
   dewPointData
 }: {
+  // TODO: Use an enum here
+  // TODO: Directly pass converted value so component dont have to handle logic
   tempUnit: "C" | "F";
   humidityData: number;
   dewPointData: number;

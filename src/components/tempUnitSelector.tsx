@@ -1,5 +1,6 @@
 import { Switch } from "@headlessui/react";
 
+// TODO: Use enum here
 type TempUnits = "C" | "F";
 
 export default function TempUnitSelector({
@@ -9,8 +10,11 @@ export default function TempUnitSelector({
   tempUnit: TempUnits;
   setTempUnit: React.Dispatch<React.SetStateAction<TempUnits>>;
 }) {
+  // TODO: Simplify by using tempUnit === "C"
   const isCelsius = tempUnit === "C" ? true : false;
 
+  // TODO: Use enum value here
+  //  Also w could use a more meaningful name like updateCurrentTemperatureUnit
   function toggleSwitch(isCelsius: boolean) {
     if (isCelsius) setTempUnit("C");
     else setTempUnit("F");
@@ -31,6 +35,13 @@ export default function TempUnitSelector({
         />
       </Switch>
       <div className="text-xs ">
+        {
+          // TODO: Use isCelsius here instead of doing another comparison
+          //  Also it's better to use flexbox on container rather than using padding on child to make both child distant
+          //  eg: display: flex;
+          //      flex-direction: column;
+          //      justify-content: space-between;
+        }
         <p className={`pb-3 ${tempUnit === 'F' ? 'text-white' : 'text-white/60'}`}>{'\u00B0F'}</p>
         <p className={`${tempUnit === 'C' ? 'text-white' : 'text-white/60'}`}>{'\u00B0C'}</p>
       </div>

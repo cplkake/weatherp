@@ -5,6 +5,9 @@ import {
   unixTimeToLocalTime,
 } from "@/lib/utils";
 
+// TODO: It looks like displayDescription and displayProbOfPrecip are centered around HourlyWeather
+//  Maybe we should make it a class so we extract functions from components
+//  And allow an easier unit testing
 interface HourlyWeather {
   dt: number;
   temp?: number;
@@ -24,14 +27,22 @@ export default function HourlyWeatherContainer({
   hourlyData,
   relevantTwilightTimes,
 }: {
+  // TODO: Use an enum
   tempUnit: "C" | "F";
   timeZoneOffset: number;
   hourlyData: Array<HourlyWeather>;
   relevantTwilightTimes: Array<HourlyWeather>;
 }) {
   // use only the twilight times that occur within the time period of the hourly forecast container
-  const upcomingTwilightTimes = relevantTwilightTimes.filter((time) => (time.dt > hourlyData[0].dt) && (time.dt < hourlyData[hourlyData.length - 1].dt));
-  const hourlyDataWithTwilight = hourlyData.concat(upcomingTwilightTimes).sort((a, b) => a.dt - b.dt);
+  // TODO: Is there a reason that we don't directly pass the upcomingTwilightTimes and process in the component ?
+  const upcomingTwilightTimes = relevantTwilightTimes.filter(
+    (time) => (time.dt > hourlyData[0].dt) && (time.dt < hourlyData[hourlyData.length - 1].dt)
+  );
+
+  // TODO: to remove a bit of logic we could directly pass hourlyDataWithTwilight to our component
+  const hourlyDataWithTwilight = hourlyData
+    .concat(upcomingTwilightTimes)
+    .sort((a, b) => a.dt - b.dt);
 
   function displayTimes(
     index: number,
@@ -46,6 +57,7 @@ export default function HourlyWeatherContainer({
     )
   }
 
+  // TODO: There is a code smell here because the same function already exists in dailyWeatherContainer
   function displayProbOfPrecip(
     index: number,
     weatherId: number | undefined,

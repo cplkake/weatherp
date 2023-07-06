@@ -2,6 +2,7 @@ import { useEffect, Fragment } from "react";
 import { Dialog, Combobox, Transition } from "@headlessui/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
+// TODO: extract types from file
 type ResultsType = {
   name: string;
   local_names?: { [key: string]: string };

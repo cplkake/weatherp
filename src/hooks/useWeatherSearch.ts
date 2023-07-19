@@ -1,5 +1,6 @@
 import useSWR from "swr";
 
+// TODO: extract both type and interface in corresponding folders to have a looser coupling
 type LocationCoords = {
   lat: number;
   lon: number;
@@ -88,6 +89,7 @@ interface FullData {
 
 export default function useWeatherSearch({ lat, lon }: LocationCoords) {
   const fetcher = async (apiUrl: string) => {
+    // TODO: missing semicolon
     const res = await fetch(apiUrl)
 
     if (!res.ok) {

@@ -10,6 +10,7 @@ import AirQualityContainer from "@/components/airQualityContainer";
 import FeelsLikeContainer from "@/components/feelsLikeContainer";
 import HumidityContainer from "@/components/humidityContainer";
 
+// TODO: Export types and interfaces outside of the file
 type ResultsType = {
   name: string;
   local_names?: { [key: string]: string };
@@ -26,6 +27,7 @@ type Location = {
   country: string
 };
 
+// TODO: Extract it into an enum
 type TempUnits = "C" | "F";
 
 interface HourlyWeather {
@@ -43,6 +45,7 @@ export default function Home() {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [userInput, setUserInput] = useState("");
   const [searchSuggestions, setSearchSuggestions] = useState<ResultsType[]>([]);
+  // TODO: Export default location as a const variable
   const [targetLocation, setTargetLocation] = useState<Location>({
     lat: 51.0460954,
     lon: -114.065465,
@@ -128,8 +131,12 @@ export default function Home() {
   }
 
   // given the color of the page position being calculated and referencing the time of the day, sunrise, and sunsets,
-  // returns the respective calculated hex color string code 
+  // returns the respective calculated hex color string code
+  // TODO: We could use Strategy Pattern here to reduce conditions and be more flexible on implementation
+  //    I'll explain how we can use Strategy Pattern step by step later
+  //    You can use an enum to fix position values and dont have to rely on string
   function calculateColor(position: "bottom" | "middle" | "top") {
+    // TODO: You can use object destructuration here to fetch sunrise, sunset and dt;
     const locationSunrise = locationResults.weather.current.sunrise;
     const locationSunset = locationResults.weather.current.sunset;
     const currentTime = locationResults.weather.current.dt;

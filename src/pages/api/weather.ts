@@ -1,6 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 
+// TODO: In best pratices we should use an open api generator to generate boiler code related to api calls
+//  If the API doesn't provide one you may have to create your own openapi classification and update it based on the
+//  API documentation
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse

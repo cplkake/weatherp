@@ -1,3 +1,4 @@
+// TODO: You should extract AirQualityData interface in an interfaces' package to loose coupling
 interface AirQualityData {
   coord: {
     lat: number;
@@ -7,6 +8,7 @@ interface AirQualityData {
     {
       dt: number;
       main: {
+        // TODO: It looks like aqi is an ENUM, you should create one corresponding to it then
         aqi: 1 | 2 | 3 | 4 | 5;
       };
       components: {
@@ -28,6 +30,13 @@ export default function AirQualityContainer({
 }: {
   airQualityData: AirQualityData
 }) {
+  // TODO: I think that we have here an enum
+  //  Given an entry we want to return a static object that will never change
+  //  We could do something like an enum class (see https://stackoverflow.com/questions/41179474/use-object-literal-as-typescript-enum-values/51398471#51398471)
+  //  Add a getByValue(airQualityInsight: number)
+  //  And then use it to get our airQuality
+  //  eg: const airQualityInsight: AQI = airQualityData.list[0].main.aqi;
+  //      const airQualityDescription = AirQualityDescription.getByValue(airQualityInsight);
   const AQI = airQualityData.list[0].main.aqi;
   const aqiDescription = {
     1: { 

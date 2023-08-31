@@ -2,11 +2,15 @@ import React from "react";
 
 export default function SearchBar({
   displayText,
-  handleClick,
+  setIsPaletteOpen,
 }: {
   displayText: string;
-  handleClick: (e: React.MouseEvent) => void;
+  setIsPaletteOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const handleClick = (e: React.MouseEvent) => {
+    setIsPaletteOpen(true);
+  };
+
   return (
     <div className="w-4/5 max-w-sm rounded-lg">
       <form>

@@ -1,39 +1,27 @@
 import { useEffect, Fragment } from "react";
 import { Dialog, Combobox, Transition } from "@headlessui/react";
+import { ResultsType, Location } from "@/lib/types";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
-// TODO: extract types from file
-type ResultsType = {
-  name: string;
-  local_names?: { [key: string]: string };
-  lat: number;
-  lon: number;
-  country: string;
-  state?: string;
-};
-
-type Location = {
-  lat: number;
-  lon: number;
-  name: string;
-  country: string;
-};
 
 export default function CommandPalette({
   displayText,
-  onChange,
+  setUserInput,
   searchSuggestions,
   setTargetLocation,
   isOpen,
   setIsOpen,
 }: {
   displayText: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setUserInput: React.Dispatch<React.SetStateAction<string>>;
   searchSuggestions: ResultsType[];
   setTargetLocation: React.Dispatch<React.SetStateAction<Location>>;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserInput(e.target.value);
+  };
 
   // sets up and tears down a listener for the user pressing '/' which toggles the open/close state of the palette
   useEffect(() => {
@@ -87,7 +75,7 @@ export default function CommandPalette({
             <div className="flex items-center px-4">
               <MagnifyingGlassIcon className="h-6 w-6 text-gray-500" />
               <Combobox.Input
-                onChange={onChange}
+                onChange={(e) => handleInput(e)}
                 className="w-full bg-transparent border-0 text-sm focus:outline-none text-gray-800 placeholder-gray-400 h-12 px-2"
                 placeholder="Search Location..."
                 value={displayText}

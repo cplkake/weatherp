@@ -12,7 +12,7 @@ import {
   ResultsType
 } from "@/lib/types";
 import ApiCreditsContainer from "./apiCreditsContainer";
-import useSuggestionsSearch from "@/hooks/useSuggestionsSearch";
+import useSuggestionsSearch from "@/hooks/useSuggestionsSearch/useSuggestionsSearch";
 
 export default function WeatherApp({
   uiData,

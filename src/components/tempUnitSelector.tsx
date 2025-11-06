@@ -1,6 +1,6 @@
 import { Switch } from "@headlessui/react";
+import { TempUnits } from "@/types";
 
-type TempUnits = "C" | "F";
 
 export default function TempUnitSelector({
   tempUnit,
@@ -9,18 +9,18 @@ export default function TempUnitSelector({
   tempUnit: TempUnits;
   setTempUnit: React.Dispatch<React.SetStateAction<TempUnits>>;
 }) {
-  const isCelsius = tempUnit === "C" ? true : false;
+  const isCelsius = tempUnit === TempUnits.Celsius;
 
-  function toggleSwitch(isCelsius: boolean) {
-    if (isCelsius) setTempUnit("C");
-    else setTempUnit("F");
+  function updateCurrentTemperatureUnit(isCelsius: boolean) {
+    if (isCelsius) setTempUnit(TempUnits.Celsius);
+    else setTempUnit(TempUnits.Fahrenheit);
   }
   
   return (
     <div className="flex gap-1 mt-14 absolute top-0 left-[75%] sm:left-2/3">
       <Switch
         checked={isCelsius}
-        onChange={toggleSwitch}
+        onChange={updateCurrentTemperatureUnit}
         className='bg-gray-400/30 relative inline-flex h-11 w-6 items-center rounded-full'
       >
         <span className="sr-only">Set temperature unit to celsius</span>
@@ -31,8 +31,14 @@ export default function TempUnitSelector({
         />
       </Switch>
       <div className="text-xs ">
-        <p className={`pb-3 ${tempUnit === 'F' ? 'text-white' : 'text-white/60'}`}>{'\u00B0F'}</p>
-        <p className={`${tempUnit === 'C' ? 'text-white' : 'text-white/60'}`}>{'\u00B0C'}</p>
+        {
+          // TODO: it's better to use flexbox on container rather than using padding on child to make both child distant
+          //  eg: display: flex;
+          //      flex-direction: column;
+          //      justify-content: space-between;
+        }
+        <p className={`pb-3 ${!isCelsius ? 'text-white' : 'text-white/60'}`}>{'\u00B0F'}</p>
+        <p className={`${isCelsius ? 'text-white' : 'text-white/60'}`}>{'\u00B0C'}</p>
       </div>
     </div>
   )

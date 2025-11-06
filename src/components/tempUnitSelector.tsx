@@ -1,5 +1,5 @@
 import { Switch } from "@headlessui/react";
-import { TempUnits } from "@/lib/types";
+import { TempUnits } from "@/types";
 
 
 export default function TempUnitSelector({

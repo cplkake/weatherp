@@ -1,11 +1,15 @@
 import Image from "next/image";
-import { UIReadyHourlyData } from "@/lib/types";
-
+import { celsiusToFahrenheit } from "@/lib/utils";
+import { FaRegClock } from "react-icons/fa6";
+import InlineIcon from "./InlineIcon";
+import { HourlyWeatherProps, HourlyWeather, TwilightTime, TempUnits } from "@/types";
 
 export default function HourlyWeatherContainer({
-  hourlyWeatherData
+  hourlyWeatherData,
+  tempUnit,
 }: {
-  hourlyWeatherData: Array<UIReadyHourlyData> | undefined; 
+  hourlyWeatherData: HourlyWeatherProps | undefined; 
+  tempUnit: TempUnits;
 }) {
 
   function displayTimes(
@@ -20,7 +24,7 @@ export default function HourlyWeatherContainer({
   
   function displayPrecipitationProbability(
     index: number,
-    dataPoint: UIReadyHourlyData
+    dataPoint: HourlyWeatherProps
   ) {
     // exclude the current weather and the sunrise/sunsets dataPoints that do not have pop
     if (index !== 0 && 'pop' in dataPoint && dataPoint.pop) {
@@ -33,32 +37,35 @@ export default function HourlyWeatherContainer({
   }
   
   function displayDescription(
-    dataPoint: UIReadyHourlyData
+    dataPoint: HourlyWeather | TwilightTime
   ) {
-    if ('temp' in dataPoint) {
-      return `${dataPoint.temp}\u00B0`;
+    if (dataPoint.kind === "weather") {
+      if (dataPoint.temp === null) return "—";
+      return tempUnit === TempUnits.Celsius ? `${dataPoint.temp}\u00B0` : `${celsiusToFahrenheit(dataPoint.temp)}\u00B0`;
     }
-    else return dataPoint.weather.description;
+    else return dataPoint.weather.label;
   }
 
   if (hourlyWeatherData) {
     return (
-      <div className="w-full mx-auto sm:container rounded-2xl p-3 sm:px-4 backdrop-blur-md bg-gray-500/10 shadow-md">
-        <h2 className="text-xs text-white/50 pb-0.5">HOURLY FORECAST</h2>
+      <div className="w-full mx-auto sm:container rounded-2xl p-4 sm:px-4 backdrop-blur-md bg-gray-500/10 shadow-md">
+        <h2 className="text-xs text-white/50 pb-0.5 flex items-center gap-1">
+          <InlineIcon Icon={FaRegClock} />HOURLY FORECAST
+        </h2>
         <div className="flex gap-x-5 overflow-x-scroll text-white">
-          {hourlyWeatherData.map((dataPoint, index) => (
-            <div key={dataPoint.dt} className="flex flex-col basis-10 shrink-0 justify-between items-center">
+          {hourlyWeatherData.map((dataPoint) => (
+            <div key={dataPoint.time} className="flex flex-col basis-10 shrink-0 justify-between items-center">
               <h3>
                 {displayTimes(dataPoint.timeString)}
               </h3>
               <div className="flex flex-col items-center justify-evenly">
                 <Image
                   src={`/${dataPoint.weather.icon}.svg`}
-                  alt={dataPoint.weather.description}
+                  alt={dataPoint.weather.label}
                   width={35}
                   height={35}
                   />
-                  {displayPrecipitationProbability(index, dataPoint)}
+                  {/* {displayPrecipitationProbability(index, dataPoint)} */}
               </div>
               <p>
                 {displayDescription(dataPoint)}

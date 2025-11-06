@@ -1,121 +1,113 @@
-import { useEffect, Fragment } from "react";
-import { Dialog, Combobox, Transition } from "@headlessui/react";
-import { ResultsType, Location } from "@/lib/types";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+'use client'
+import { useState, useEffect } from 'react'
+import { Command } from 'cmdk'
+import fetchSuggestions from '@/lib/api/fetchSuggestions'
+import { LocationSuggestion } from '@/lib/schemas/geocodingSchema'
 
 
 export default function CommandPalette({
-  displayText,
-  setUserInput,
-  searchSuggestions,
-  setTargetLocation,
-  isOpen,
-  setIsOpen,
+  open,
+  setOpen,
+  onSelect,
 }: {
-  displayText: string;
-  setUserInput: React.Dispatch<React.SetStateAction<string>>;
-  searchSuggestions: ResultsType[];
-  setTargetLocation: React.Dispatch<React.SetStateAction<Location>>;
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  onSelect: (location: LocationSuggestion) => void
 }) {
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserInput(e.target.value);
-  };
+  const [query, setQuery] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([])
 
-  // sets up and tears down a listener for the user pressing '/' which toggles the open/close state of the palette
+
   useEffect(() => {
-    function onKeydown(e: KeyboardEvent) {
-      if (e.key === "/") {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsOpen(!isOpen);
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setOpen(o => !o)
       }
     }
-    window.addEventListener("keydown", onKeydown);
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setLoading(true);
+    const timeoutId = setTimeout(async () => {
+      try {
+        const res = await fetchSuggestions(query, controller.signal);
+        setSuggestions(res ?? []);
+      }
+      catch (err: any) {
+        if (err.name !== 'AbortError') console.error(err)
+      }
+    finally {
+      setLoading(false);
+    }
+    }, 500)
+
     return () => {
-      window.removeEventListener("keydown", onKeydown);
-    };
-  }, [isOpen]);
+      clearTimeout(timeoutId);
+      controller.abort();
+    }
+  }, [query])
 
   return (
-    <Transition show={isOpen} as={Fragment}>
-      <Dialog
-        onClose={setIsOpen}
-        className="fixed inset-0 p-4 pt-16 overflow-y-auto"
-      >
-        <Transition.Child
-          enter="duration-300 ease-out"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="duration-200 ease-in"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-          as={Fragment}
+    <Command.Dialog
+      open={open}
+      onOpenChange={setOpen}
+      label="Location Search Bar"
+      shouldFilter={false}
+      overlayClassName={`
+        fixed inset-0 bg-black/40 backdrop-blur-sm
+        data-[state=open]:animate-fadeIn
+        data-[state=closed]:animate-fadeOut
+      `}
+      className={`
+        fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-3xl
+        transition-transform duration-200
+        data-[state=open]:animate-scaleIn
+        data-[state=closed]:animate-scaleOut
+      `}
+    >
+      <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/10 p-2 shadow-2xl backdrop-blur-2xl transition-all duration-300">
+        <Command.Input
+          autoFocus
+          value={query}
+          onValueChange={setQuery}
+          placeholder="Search for a city"
+          className="relative w-full rounded-xl bg-transparent p-3 text-lg text-white placeholder:text-white/60 outline-none
+          after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-white/10 after:to-transparent after:content-['']"
+        />
+        <Command.List
+          className={`
+            transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] overflow-hidden
+            ${suggestions.length > 0 || (query.length > 0 && !loading && suggestions.length === 0)
+              ? 'opacity-100 translate-y-0 max-h-[400px]'
+              : 'opacity-0 -translate-y-2 max-h-0'
+            }
+            p-0 m-0 overflow-y-auto rounded-xl bg-transparent
+          `}
         >
-          <Dialog.Overlay className="fixed inset-0 bg-gray-500/75" />
-        </Transition.Child>
-        <Transition.Child
-          enter="duration-300 ease-out"
-          enterFrom="opacity-0 scale-95"
-          enterTo="opacity-100 scale-100"
-          leave="duration-200 ease-in"
-          leaveFrom="opacity-100 scale-100"
-          leaveTo="opacity-0 scale-95"
-          as={Fragment}
-        >
-          <Combobox
-            onChange={(location: Location) => {
-              setIsOpen(false);
-              setTargetLocation(location);
-            }}
-            as="div"
-            className="relative bg-white max-w-xl mx-auto rounded-xl shadow-2xl ring-1 ring-black/5 divide-y divide-gray-100 overflow-hidden"
-          >
-            <div className="flex items-center px-4">
-              <MagnifyingGlassIcon className="h-6 w-6 text-gray-500" />
-              <Combobox.Input
-                onChange={(e) => handleInput(e)}
-                className="w-full bg-transparent border-0 text-sm focus:outline-none text-gray-800 placeholder-gray-400 h-12 px-2"
-                placeholder="Search Location..."
-                value={displayText}
-              />
-            </div>
-            {searchSuggestions.length > 0 && (
-              <Combobox.Options
-                static
-                className="max-h-96 py-4 text-sm overflow-y-auto"
+          {!loading && query.length > 0 && suggestions.length === 0 && (
+            <p className="px-4 py-2 text-sm text-white/70 transition-opacity duration-200"> No results found. </p>
+          )}
+          {suggestions.length > 0 &&
+            suggestions.map((s) => (
+              <Command.Item
+                key={s.id}
+                value={`${s.id}`}
+                onSelect={() => {
+                  setOpen(false)
+                  onSelect(s)
+                }}
+                className="cursor-pointer rounded-lg px-3 py-2 text-white data-[selected=true]:bg-white/20 transition-colors"
               >
-                {searchSuggestions.map((suggestion) => (
-                  <Combobox.Option
-                    key={`${suggestion.lat}, ${suggestion.lon}`}
-                    value={{
-                      lat: suggestion.lat,
-                      lon: suggestion.lon,
-                      name: suggestion.name,
-                      country: suggestion.country,
-                    }}
-                  >
-                    {({ active }) => (
-                      <div
-                        className={`px-4 py-2 ${
-                          active ? "bg-indigo-600" : "bg-white"
-                        }`}
-                      >
-                        <span
-                          className={`font-medium ${
-                            active ? "text-white" : "text-gray-900"
-                          }`}
-                        >{`${suggestion.name}, ${suggestion.country}`}</span>
-                      </div>
-                    )}
-                  </Combobox.Option>
-                ))}
-              </Combobox.Options>
-            )}
-          </Combobox>
-        </Transition.Child>
-      </Dialog>
-    </Transition>
-  );
+                {[s.name, s.admin1, s.country].filter(Boolean).join(', ')}
+              </Command.Item>
+            ))}
+        </Command.List>
+      </div>
+    </Command.Dialog>
+  )
 }

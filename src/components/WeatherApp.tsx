@@ -40,7 +40,6 @@ export default function WeatherApp({
   const { data: weather, isLoading } = useSWR(
     key,
     async () => {
-      // console.log(`SWR revalidating at `, new Date().toLocaleTimeString())
       return swrFetcher(key)
     },
     {

@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
 const timezoneFormat = z.string().regex(
-  /^[A-Za-z_]+\/[A-Za-z_]+$/,
-  'Invalid timezone format. Expected Region/City'
+  /^[A-Za-z0-9_\+\-]+(?:\/[A-Za-z0-9_\+\-]+)*$/,
+  'Invalid IANA timezone format'
 )
 
 export const LocationSuggestionSchema = z.object({
